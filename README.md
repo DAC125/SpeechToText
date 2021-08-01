@@ -12,5 +12,3 @@ por ejemplo
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=~/key.json
 ```
-La clave JSON se encuentra en la carpeta `src/Resourses/Keys`
-
