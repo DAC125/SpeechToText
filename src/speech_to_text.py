@@ -1,20 +1,37 @@
-filepath = "/home/maria/Escritorio/2021/Seti/SpeechToText/src/Resourses/Audios/"     #Input audio file path
-output_filepath = "/home/maria/Escritorio/2021/Seti/SpeechToText/src/Resourses/Transcription/" #Final transcript path
-bucket_name = "audio_mp3" #Name of the bucket created in the step before
-
+filepath = "/home/estudiante/Documentos/TEC/SETI/speech/SpeechToText/src/Resourses/Audios/"     #Input audio file path
+output_filepath = "/home/estudiante/Documentos/TEC/SETI/speech/SpeechToText/src/Resourses/Transcription/" #Final transcript path
+bucket_name = "audios_mp3" #Name of the bucket created in the step before
+blobs_names=[]
 # Import libraries
-import os
+import os, math
 from google.cloud import speech
 from google.cloud import storage
 from pydub import AudioSegment
 
+
+def single_split(audio, from_min, to_min, split_filename):
+    t1 = from_min * 60 * 1000
+    t2 = to_min * 60 * 1000
+    split_audio = audio[t1:t2]
+    split_audio.export(filepath + split_filename + '.flac', format="flac")
+
+def multiple_split(audio, min_per_split,output_audio_name):
+    total_mins = math.ceil(audio.duration_seconds/ 60)
+    for i in range(0, total_mins, min_per_split):
+        split_fn = str(i) + '_' + output_audio_name
+        blobs_names.append(split_fn)
+        #print(blobs_names)
+        single_split(audio,i, i + min_per_split, split_fn)
+        print(str(i) + ' Done')
+        if i == total_mins - min_per_split:
+            print('All splited successfully')
 
 def mp3_to_flac(audio_name, output_audio_name):
     audio_mp3 = AudioSegment.from_file(filepath + audio_name, format="mp3")
     audio_mp3 = audio_mp3.set_frame_rate(16000)
     audio_mp3 = audio_mp3.set_channels(1)
     audio_mp3 = audio_mp3.set_sample_width(2)
-    audio_mp3.export(filepath + output_audio_name, format="flac")
+    multiple_split(audio_mp3, math.ceil(audio_mp3.duration_seconds/960),output_audio_name) #divide audio in 32 parts
 
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
@@ -22,7 +39,6 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
-
     blob.upload_from_filename(source_file_name)
 
 
@@ -30,21 +46,44 @@ def delete_blob(bucket_name, blob_name):
     """Deletes a blob from the bucket."""
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
+
     blob = bucket.blob(blob_name)
 
     blob.delete()
 
+def compose_file(bucket_name, destination_blob_name):
+    """Concatenate source blobs into destination blob."""
+    # bucket_name = "your-bucket-name"
+    # first_blob_name = "first-object-name"
+    # second_blob_name = "second-blob-name"
+    # destination_blob_name = "destination-object-name"
 
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    destination = bucket.blob(destination_blob_name)
+    destination.content_type = "audio/flac"
+
+    # sources is a list of Blob instances, up to the max of 32 instances per request
+    buckets_list=[]
+    for i in blobs_names:
+        buckets_list.append(bucket.get_blob(i+'.flac'))
+    print(len(buckets_list))
+    destination.compose(buckets_list)
+    buckets_list
 
 def google_transcribe(audio_file_name):
     extension_flac = ".flac"
-    mp3_to_flac(audio_file_name + ".mp3", audio_file_name + extension_flac)
 
-    source_file_name = filepath + audio_file_name + extension_flac
-    destination_blob_name = audio_file_name + extension_flac
+    mp3_to_flac(audio_file_name + ".mp3", audio_file_name)
 
-    upload_blob(bucket_name, source_file_name, destination_blob_name)
+    for i in blobs_names:
+        source_file_name = filepath + i + extension_flac
+        destination_blob_name = i + extension_flac
+        upload_blob(bucket_name, source_file_name, destination_blob_name)
+    
 
+    compose_file(bucket_name, audio_file_name + extension_flac)
+    '''
     gcs_uri = 'gs://' + bucket_name + '/' + audio_file_name + extension_flac
     transcript = ''
 
@@ -78,6 +117,9 @@ def write_transcripts(transcript_filename, transcript):
     f = open(output_filepath + transcript_filename, "w+")
     f.write(transcript)
     f.close()
+'''
+
+
 
 
 def main():
@@ -88,7 +130,7 @@ def main():
         else:
             transcript = google_transcribe("audio_1")
             transcript_filename = "ClaseMunguia".split('.')[0] + '.txt'
-            write_transcripts(transcript_filename, transcript)
+            #write_transcripts(transcript_filename, transcript)
 
 main()
 
