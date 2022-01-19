@@ -1,6 +1,6 @@
 from flask import Flask,jsonify,request,json
 from flask.wrappers import Response
-from speech_to_text_cloud_v import main
+#from speech_to_text_cloud_v import main
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ app = Flask(__name__)
 def members():
     if request.method == 'POST':
         data = json.loads(request.data)
-        main(data['nombre'],data['direccion'])
+        #main(data['nombre'],data['direccion'])
         print("----------------------------------------------------")
         print("El nombre del archivo es: ", data['nombre'])
         print("----------------------------------------------------")
