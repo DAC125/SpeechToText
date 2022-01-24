@@ -1,9 +1,9 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react';
 import axios from 'axios';
-import '../assets/css/components/Content.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { Container, Form, Button } from 'react-bootstrap'
-
+import '../assets/css/components/Content.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Form, Button } from 'react-bootstrap';
+const fs = require('fs');
 
 function Content() {
     const [file, setFile] = useState({
@@ -11,7 +11,13 @@ function Content() {
         file: ''
     });
 
+    useEffect(() => {
+        console.log(file);
+      });
+
+ 
     const onSuubmit = () => {
+        
         axios.post("/members",file)
         .then(response => {
             console.log(response)
@@ -22,16 +28,18 @@ function Content() {
     }
 
     const onSubmit = () => {
-        console.log(file)
+        console.log(file.fileUrl[0])
+       
         let reader =  new FileReader();
         reader.readAsDataURL(file.fileUrl[0]);
         reader.onload=(e)=>{
+            const answer_array = e.target.result.split(',');
             console.log(e.target.result)
             setFile({
                 ...file,
-            file: e.target.result})
+            file: answer_array[1]})
         }
-       
+        
 
         
 
@@ -43,7 +51,8 @@ function Content() {
             ...file,
             [event.target.name]: event.target.files
         })
-        console.log(file)
+        
+        
     };
 
   
