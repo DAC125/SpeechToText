@@ -11,8 +11,10 @@ app = Flask(__name__)
 def members():
     if request.method == 'POST':
         data = json.loads(request.data)
-        audio_file = base64.b64decode(data['file'])
-        with open(os.path.join(r'C:\Users\dcapr\OneDrive\Documents\SpeechToText\src\Resourses\test', 'aaaa.m4a'), 'wb') as file_to_write:
+        print(data)
+        
+        audio_file = base64.b64decode(data['fileBase64'])
+        with open(os.path.join('/home/dac125/Documents/SpeechToText/src/Resourses/test', data['name']), 'wb') as file_to_write:
             file_to_write.write(audio_file)
             file_to_write.close()
         #print(data)
