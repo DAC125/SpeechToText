@@ -10,21 +10,22 @@ app = Flask(__name__)
 @app.route("/members", methods=["POST"])
 def members():
     if request.method == 'POST':
-        data = json.loads(request.data)
-        print(data)
+        print(request)
+        req = json.loads(request.data)
+        #print(req)
         
-        audio_file = base64.b64decode(data['fileBase64'])
-        with open(os.path.join('/home/dac125/Documents/SpeechToText/src/Resourses/test', data['name']), 'wb') as file_to_write:
+        audio_file = base64.b64decode(req['fileBase64'])
+        with open(os.path.join('/home/dac125/Documents/SpeechToText/src/Resourses/test', req['name']), 'wb') as file_to_write:
             file_to_write.write(audio_file)
             file_to_write.close()
-        #print(data)
+        #print(req)
         '''
-        #main(data['nombre'],data['direccion'])
+        #main(req['nombre'],req['direccion'])
         print("----------------------------------------------------")
-        print("El nombre del archivo es: ", data['nombre'])
+        print("El nombre del archivo es: ", req['nombre'])
         print("----------------------------------------------------")'''
-        data = {"members": ["Maria","dac","Alberto"]}
-        return jsonify(data)
+        res = {"members": ["Maria","dac","Alberto"]}
+        return jsonify(res)
 
 
 if __name__ == "__main__":

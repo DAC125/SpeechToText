@@ -1,5 +1,5 @@
 import React from 'react'
-import {Toolbar, IconButton, Typography, AppBar} from '@material-ui/core'
+import {Toolbar, AppBar} from '@material-ui/core'
 import tec_logo from '../assets/img/logo.svg'
 import '../assets/css/components/Navbar.css'
 
