@@ -2,6 +2,7 @@ from flask import Flask,jsonify,request,json
 from flask.wrappers import Response
 import base64
 import os
+import time
 #from speech_to_text_cloud_v import main
 
 app = Flask(__name__)
@@ -10,6 +11,8 @@ app = Flask(__name__)
 @app.route("/members", methods=["POST"])
 def members():
     if request.method == 'POST':
+        print("waiting...")
+        '''
         print(request)
         req = json.loads(request.data)
         #print(req)
@@ -19,11 +22,13 @@ def members():
             file_to_write.write(audio_file)
             file_to_write.close()
         #print(req)
-        '''
+        
         #main(req['nombre'],req['direccion'])
         print("----------------------------------------------------")
         print("El nombre del archivo es: ", req['nombre'])
-        print("----------------------------------------------------")'''
+        print("----------------------------------------------------")
+        '''
+        time.sleep(10)
         res = {"members": ["Maria","dac","Alberto"]}
         return jsonify(res)
 
