@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import fileDownload from 'js-file-download';
 import '../assets/css/components/Content.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Form, Button } from 'react-bootstrap';
@@ -17,20 +18,27 @@ function Content() {
     const [openModalFormat, setOpenModalFormat] = useState(false)
     const [enableButtonSummit, setEnableButtonSummit] = useState(false)
     const [openLoading, setOpenLoading] = useState(false)
-  
+    const [download, setDownload] = useState(false)
+    const [txtFile, setTxtFile] = useState()
 
     const onSubmit = () => {
 
         setOpenLoading(true)
-        axios.post("/members", file)
+        axios.post("/transcriptFile", file)
             .then(response => {
                 setOpenLoading(false)
-                console.log(response.data)
+                setTxtFile(atob(response.data.file))
+                setDownload(true)
+
             })
             .catch(error => {
                 console.log(error)
             })
     };
+
+    const onDownload = () => {
+        fileDownload(txtFile, "test.txt")
+    }
 
 
     const handleChange = (event) => {
@@ -80,13 +88,18 @@ function Content() {
                 </Form.Group>
             </div>
             <div className='footer'>
-                <Button variant="primary" type="submit" onClick={onSubmit} disabled={!enableButtonSummit} id='submitBtn'> submit</Button>
+                <Button variant="primary" type="submit" onClick={onSubmit} disabled={!enableButtonSummit} id='submitBtn'> Transcribir Audio</Button>
+                {download && <Button variant="primary" type="submit" onClick={onDownload} id='donwloadBtn'> Descargar Archivo</Button>}
+
             </div>
             <div>
                 {openModalFormat && <Modal closeModal={setOpenModalFormat} />}
             </div>
             <div>
-                {openLoading && <Loading/>}
+                {openLoading && <Loading />}
+            </div>
+            <div>
+
             </div>
 
         </Container>
