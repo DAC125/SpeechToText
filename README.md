@@ -1,5 +1,4 @@
 # SpeechToText
-Proyecto programado para el departamento de Soporte Especializado en Tecnologías de Información de la sede de Alajuela (SETI-AL), para pasar a texto las A web app for the IT Service of the "Instituto Tecnologico de Costa Rica" on Alajuela, the goal is to transcript zoom meetings from audio to text
 
 The project is developed on python, ReactJS, Javascript and uses google cloud service "speech to text", to transcript from audio to text
 
@@ -13,7 +12,6 @@ example
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=~/key.json
 ```
-
 
 ## Run and install dependencies 
 install the dependencies:
