@@ -3,6 +3,18 @@ Proyecto programado para el departamento de Soporte Especializado en Tecnología
 
 The project is developed on python, ReactJS, Javascript and uses google cloud service "speech to text", to transcript from audio to text
 
+# Set del environment
+To set the environment add the google credentials en de environment variables
+```
+export GOOGLE_APPLICATION_CREDENTIALS=[direccion de la clave json]
+```
+example
+
+```
+export GOOGLE_APPLICATION_CREDENTIALS=~/key.json
+```
+
+
 ## Run and install dependencies 
 install the dependencies:
 ```
